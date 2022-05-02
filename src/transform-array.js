@@ -13,10 +13,70 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function transform(arr) {
+
+  if (!Array.isArray(arr)) {
+    throw new Error("'arr' parameter must be an instance of the Array!");
+  }
+
+  const resultArr = [];
+
+  let isPrevElementDeleted = false;
+  for (const [i, el] of arr.entries()) {
+
+    if (el === '--double-next') {
+      doubleNext(i);
+    } else if (el === '--double-prev') {
+      if (isPrevElementDeleted) {
+        isPrevElementDeleted = false;
+        continue;
+      }
+
+      doublePrev(i);
+    } else if (el === '--discard-next') continue;
+    else if (i > 0 && arr[i - 1] === '--discard-next') {
+      isPrevElementDeleted = true;
+      continue;
+    } else if (el === '--discard-prev') {
+      if (isPrevElementDeleted) {
+        isPrevElementDeleted = false;
+        continue;
+      }
+
+      discardPrev(i)
+    } else {
+      resultArr.push(el);
+    }
+
+    isPrevElementDeleted = false;
+  }
+
+  function doubleNext(i) {
+    if (i !== (arr.length - 1)) {
+      resultArr.push(arr[i + 1]);
+    }
+  }
+
+  function doublePrev(i) {
+    if (i !== 0) {
+      resultArr.push(resultArr[resultArr.length - 1]);
+    }
+  }
+
+  function discardPrev(i) {
+    if (i !== 0) {
+      resultArr.pop(resultArr[resultArr.length - 1]);
+    }
+  }
+
+  return resultArr;
 }
+
+
+
+
+
+
 
 module.exports = {
   transform
